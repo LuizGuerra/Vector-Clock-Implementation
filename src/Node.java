@@ -22,6 +22,7 @@ public class Node {
         vectorClock.put(configData.thisId, 0);
     }
 
+    // TODO: Mandar singlecast, RECEBER single casts e atualizar clock local
     public void run() {
         waitOtherNodes();
         final String id = configData.thisId;
@@ -44,7 +45,7 @@ public class Node {
                 this.vectorClock.put(id, this.vectorClock.get(id) + 1);
             }
         }
-        
+
     }
 
     private String vectorClockToString() {
