@@ -155,9 +155,9 @@ public class Node implements Closeable {
         } catch (Exception ignored) {}
         while(true){
             try {
-                String message = controller.receive();
-                if(message.split("\\s")[0].equals("START")) { break; }
-                System.out.println(message);
+                String[] message = controller.receive().split("\\s");
+                if(message[0].equals("START")) { break; }
+                System.out.println("Received " + message[0] + " from " + message[1]);
                 counter--;
             } catch (Exception ignored) {}
             if (counter == 0) {
@@ -167,6 +167,7 @@ public class Node implements Closeable {
                 break;
             }
         }
+        System.out.println("Everyone is ready, starting program...\n");
     }
 
     private void endProcess() {
