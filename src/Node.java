@@ -1,4 +1,3 @@
-import java.io.Closeable;
 import java.io.IOException;
 
 import java.net.DatagramPacket;
@@ -12,7 +11,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Node implements Closeable {
+public class Node {
     static final int port = 4500;
     static final String group = "224.0.0.1";
     
@@ -73,13 +72,12 @@ public class Node implements Closeable {
                 socket.close();
             } catch (Exception e) { e.printStackTrace(); }
         }
-
     }
 
     public void run() {
         waitOtherNodes();
         startProcesses();
-        endProcess();
+        // endProcess();
     }
 
     private void startProcesses() {
@@ -179,8 +177,8 @@ public class Node implements Closeable {
             try {
                 String[] message = controller.receive().split("\\s");
                 if(message[0].equals("EXIT")) { break; }
-                System.out.println("Process @" + message[1] + " is ending");
                 counter--;
+                System.out.println("Process @" + message[1] + " is ending. " + counter + " more to end.");
                 if (counter == 0) {
                     controller.send("EXIT");
                     break;
@@ -192,12 +190,9 @@ public class Node implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        receiver.interrupt();
         System.gc();
         System.exit(0);
-    }
-    @Override
-    public void close() throws IOException {
-        receiver.interrupt();
     }
 
     public static void main(String args[]) {

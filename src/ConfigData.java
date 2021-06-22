@@ -63,7 +63,7 @@ public class ConfigData {
         for (String id : ids) {
             if (counter++ == index) { return id; }
         }
-        return sortedIds.get(0);
+        return sortedIds.get(sortedIds.get(0).equals(thisId) ? 1 : 0);
     }
 
     public Configuration thisConfiguration() {
