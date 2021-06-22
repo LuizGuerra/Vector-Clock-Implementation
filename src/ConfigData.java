@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ public class ConfigData {
     final String pathString;
     
     final Set<String> ids;
+    final List<String> sortedIds;
     final String thisId;
     final String host;
     final Integer port;
@@ -32,11 +34,10 @@ public class ConfigData {
         List<String> list = reader.lines()
             .collect(Collectors.toList());
         reader.close();
-        this.ids = new HashSet<>(
-            list.stream()
+        this.ids = list.stream()
             .map(x -> x.substring(0, 1))
-            .collect(Collectors.toSet())
-        );
+            .collect(Collectors.toSet());
+        this.sortedIds = ids.stream().sorted().collect(Collectors.toList());
         final String[] thisOne = list.stream()
             .filter(x -> x.substring(0, 1).equals(index))
             .collect(Collectors.toList())
