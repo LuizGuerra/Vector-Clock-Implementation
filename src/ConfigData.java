@@ -26,15 +26,16 @@ public class ConfigData {
     static private final Random random = new Random();
 
     public ConfigData(String pathString, String index) throws Exception {
-        // Set data
+        // Set atributes
         this.pathString = pathString;
         this.index = index;
-        // Parse data
+        // Read and close file
         File file = new File(pathString);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         List<String> list = reader.lines()
             .collect(Collectors.toList());
         reader.close();
+        // Set final atributes
         this.ids = list.stream()
             .map(x -> x.substring(0, 1))
             .collect(Collectors.toSet());
