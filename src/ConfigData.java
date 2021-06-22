@@ -61,8 +61,7 @@ public class ConfigData {
         int index = random.nextInt(ids.size());
         int counter = 0;
         for (String id : ids) {
-            if (counter == index) { return id; }
-            index++;
+            if (counter++ == index) { return id; }
         }
         return sortedIds.get(0);
     }
