@@ -21,6 +21,8 @@ public class ConfigData {
     final Integer minDelay;
     final Integer maxDelay;
 
+    private Configuration thisConfiguration;
+
     static private final Random random = new Random();
 
     public ConfigData(String pathString, String index) throws Exception {
@@ -62,6 +64,13 @@ public class ConfigData {
             index++;
         }
         return sortedIds.get(0);
+    }
+
+    public Configuration thisConfiguration() {
+        if (thisConfiguration == null) {
+            thisConfiguration = findById(thisId);
+        }
+        return thisConfiguration;
     }
 
     public Configuration findById(String id) {
