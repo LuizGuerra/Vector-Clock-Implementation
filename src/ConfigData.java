@@ -4,8 +4,6 @@ import java.io.FileReader;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class ConfigData {
@@ -14,6 +12,7 @@ public class ConfigData {
     
     final Set<String> ids;
     final List<String> sortedIds;
+    final List<Configuration> configurations;
     final String thisId;
     final String host;
     final Integer port;
@@ -37,6 +36,9 @@ public class ConfigData {
         this.ids = list.stream()
             .map(x -> x.substring(0, 1))
             .collect(Collectors.toSet());
+        this.configurations = list.stream()
+            .map(x -> new Configuration(x))
+            .collect(Collectors.toList());
         this.sortedIds = ids.stream().sorted().collect(Collectors.toList());
         final String[] thisOne = list.stream()
             .filter(x -> x.substring(0, 1).equals(index))
@@ -59,7 +61,18 @@ public class ConfigData {
             if (counter == index) { return id; }
             index++;
         }
+        return sortedIds.get(0);
+    }
+
+    public Configuration findById(String id) {
+        for (Configuration c : configurations) {
+            if(c.id.equals(id)) { return c; }
+        }
         return null;
+    }
+
+    public Configuration randomConfiguration() {
+        return findById(getRandomId());
     }
 
     @Override

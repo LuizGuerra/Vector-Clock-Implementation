@@ -1,39 +1,77 @@
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Node {
-    static final int port = 5000;
+    static final int port = 4500;
     static final String group = "224.0.0.1";
 
     MulticastController controller;
     ConfigData configData;
     Random random;
-    Map<String, Integer> vectorClock;
+    ConcurrentHashMap<String, Integer> vectorClock;
+
+    ReceiveUnicast receiver;
     
     public Node(String path, String index) throws Exception {        
         configData = new ConfigData(path, index);
-        System.out.println(configData.toString());
+        // System.out.println(configData.toString());
         controller = new MulticastController(configData.thisId, group, port);
         random = new Random();
-        vectorClock = new HashMap<>();
+        receiver = new ReceiveUnicast();
+        receiver.start();
+        vectorClock = new ConcurrentHashMap<>();
         for (String id : configData.sortedIds) { vectorClock.put(id, 0); }
-        System.out.println(vectorClock);
-        vectorClock.put("0", 100);
-        vectorClock.put("1", 111);
-        vectorClock.put("2", 222);
-        System.out.println(vectorClock);
-        try {
-            updateVectorClockFrom("222 100 666");
-        } catch (Exception ignored) {}
-        System.out.println(vectorClock);
     }
 
-    // TODO: Mandar singlecast, RECEBER single casts e atualizar clock local
+    private class ReceiveUnicast extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    DatagramSocket socket = new DatagramSocket(configData.port);
+                    byte[] buffer = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                    socket.receive(packet);
+                    String received = new String(packet.getData(), 0, packet.getLength());
+                    updateVectorClockFrom(received);
+                    System.out.println("Received event\t" + vectorClockToString());
+                    socket.close();
+                } catch (Exception e) { e.printStackTrace(); }
+            }
+        }
+    }
+
+    private class SendUnicast extends Thread {
+        private InetAddress address;
+        private Integer port;
+        private String message;
+        public SendUnicast(String address, Integer port, String message) throws UnknownHostException {
+            this.address = InetAddress.getByName(address);
+            this.port = port;
+            this.message = message;
+        }
+        @Override
+        public void run() {
+            try {
+                DatagramSocket socket = new DatagramSocket();
+                byte[] byteMessage = message.getBytes();
+                DatagramPacket datagramPacket = new DatagramPacket(
+                    byteMessage, byteMessage.length, this.address, this.port);
+                socket.send(datagramPacket);
+                socket.close();
+            } catch (Exception e) { e.printStackTrace(); }
+        }
+
+    }
+
     public void run() {
         waitOtherNodes();
         startProcesses();
@@ -51,15 +89,19 @@ public class Node {
             } catch (Exception ignored) {}
             if(random.nextDouble() < chance) {
                 // Send message to another process
-                String randomId = configData.getRandomId();
-                // TODO: Prepare singlecast packet
-                String message = vectorClockToString();
-                byte[] byteMessage = message.getBytes();
-                // TODO: Send singlecast packet
+                Configuration c = configData.randomConfiguration();
+                System.out.println(c.toString());
+                System.out.println("Sending event to @" + c.id);
+                try {
+                    SendUnicast sender = new SendUnicast(c.host, c.port, vectorClockToString());
+                    sender.start();
+                } catch (Exception e) { e.printStackTrace(); };
             } else {
                 // Local event
                 this.vectorClock.put(id, this.vectorClock.get(id) + 1);
+                System.out.println("Local event\t" + vectorClockToString());
             }
+            System.gc();
         }
     }
 
@@ -90,6 +132,18 @@ public class Node {
             .substring(1);
     }
 
+    // private String localEvent() {
+    //     // i [c,c,c] i d s t
+    // }
+
+    // private String sendMessage() {
+    //     // i [c,c,c] i d s t
+    // }
+
+    // private String receiveMessage() {
+    //     // i [c,c,c] i d s t
+    // }
+
     private void waitOtherNodes() {
         int counter = configData.sortedIds.size();
         try {
@@ -105,7 +159,7 @@ public class Node {
             if (counter == 0) {
                 try {
                     controller.send("START");
-                } catch (IOException e) {e.printStackTrace();}
+                } catch (IOException e) { e.printStackTrace(); }
                 break;
             }
         }
@@ -125,6 +179,6 @@ public class Node {
         try {
             Node node = new Node(args[0], args[1]);
             node.run();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {ignored.printStackTrace();}
     }
 }
