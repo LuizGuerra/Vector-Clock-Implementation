@@ -28,7 +28,8 @@ public class ConfigData {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         List<String> list = reader.lines()
             .collect(Collectors.toList());
-        this.ids = new HashSet<>(
+        reader.close();
+            this.ids = new HashSet<>(
             list.stream()
             .map(x -> x.substring(0, 1))
             .collect(Collectors.toSet())

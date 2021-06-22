@@ -1,9 +1,10 @@
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-public class MulticastController {
+public class MulticastController implements Closeable {
     final int port;
     final InetAddress group;
     final MulticastSocket socket;
@@ -23,19 +24,11 @@ public class MulticastController {
         socket.send(packet);
     }
 
-    public void send(String request, String body) throws IOException {
-        byte[] message = (request + " " + name + " " + body).getBytes();
-        DatagramPacket packet = new DatagramPacket(message, message.length, group, port);
-        socket.send(packet);
-    }
-
-    public void send(MulticastMessageFormat mmf) throws IOException {
-        send(mmf.request, mmf.body);
-    }
-
-    public void send(String request, Long time) throws IOException {
-        send(request, time.toString());
-    }
+    // public void send(String request, String body) throws IOException {
+    //     byte[] message = (request + " " + name + " " + body).getBytes();
+    //     DatagramPacket packet = new DatagramPacket(message, message.length, group, port);
+    //     socket.send(packet);
+    // }
 
     public String receive() throws IOException {
         // Read
@@ -51,5 +44,10 @@ public class MulticastController {
         socket.leaveGroup(group);
         socket.close();
         System.gc();
+    }
+
+    @Override
+    public void close() throws IOException {
+        socket.close();
     }
 }

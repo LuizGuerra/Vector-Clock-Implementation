@@ -1,26 +1,41 @@
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class Node {
     static final int port = 5000;
     static final String group = "224.0.0.1";
 
     MulticastController controller;
-
+    ConfigData cd;
+    
     public Node(String path, String index) throws Exception {        
-        ConfigData cd = new ConfigData(path, index);
+        cd = new ConfigData(path, index);
         System.out.println(cd.toString());
-        // controller = new MulticastController(name, group, port);
+        controller = new MulticastController(cd.thisId, group, port);
     }
 
     public void run() {
+        waitOtherNodes();
+    }
+
+    private void waitOtherNodes() {
+        int counter = cd.ids.size() - 1;
         try {
             controller.send("HELLO");
         } catch (Exception ignored) {}
         while(true){
             try {
-                System.out.println(controller.receive());
+                String message = controller.receive();
+                System.out.println(message);
+                counter--;
             } catch (Exception ignored) {}
+            if (counter == 0) {
+                break;
+            }
+        }
+        try {
+            controller.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
