@@ -41,7 +41,7 @@ public class Node {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
                     String[] received = new String(packet.getData(), 0, packet.getLength()).split(";");
-                    updateVectorClockFrom(received[2]);
+                    updateVectorClockFrom(received[1]);
                     System.out.println("Received event from @" + received[0] +
                         "\t" + vectorClockToString());
                     socket.close();
@@ -63,8 +63,7 @@ public class Node {
         public void run() {
             try {
                 DatagramSocket socket = new DatagramSocket();
-                byte[] byteMessage = (configData.thisId + ";" + 
-                    configData.host + ";" + message).getBytes();
+                byte[] byteMessage = (configData.thisId + ";" + message).getBytes();
                 DatagramPacket datagramPacket = new DatagramPacket(
                     byteMessage, byteMessage.length, this.address, this.port);
                 socket.send(datagramPacket);
