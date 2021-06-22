@@ -1,3 +1,4 @@
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,15 +10,15 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class Node {
+public class Node implements Closeable {
     static final int port = 4500;
     static final String group = "224.0.0.1";
-
-    MulticastController controller;
-    ConfigData configData;
+    
     Random random;
     ConcurrentHashMap<String, Integer> vectorClock;
 
+    MulticastController controller;
+    ConfigData configData;
     ReceiveUnicast receiver;
     
     public Node(String path, String index) throws Exception {        
@@ -76,6 +77,7 @@ public class Node {
     public void run() {
         waitOtherNodes();
         startProcesses();
+        endProcess();
     }
 
     private void startProcesses() {
@@ -91,8 +93,7 @@ public class Node {
             if(random.nextDouble() < chance) {
                 // Send message to another process
                 Configuration c = configData.randomConfiguration();
-                System.out.println(c.toString());
-                System.out.println("Sending event to @" + c.id);
+                System.out.println("Sending event to @" + c.id + "\t" + vectorClockToString());
                 try {
                     SendUnicast sender = new SendUnicast(c.host, c.port, vectorClockToString());
                     sender.start();
@@ -100,7 +101,7 @@ public class Node {
             } else {
                 // Local event
                 this.vectorClock.put(id, this.vectorClock.get(id) + 1);
-                System.out.println("Local event\t" + vectorClockToString());
+                System.out.println("Local event\t\t" + vectorClockToString());
             }
             System.gc();
         }
@@ -164,11 +165,36 @@ public class Node {
                 break;
             }
         }
+    }
+
+    private void endProcess() {
+        int counter = configData.sortedIds.size();
+        try {
+            controller.send("CLOSING " + configData.thisId);
+        } catch (Exception ignored) {}
+        while(true){
+            try {
+                String[] message = controller.receive().split("\\s");
+                if(message[0].equals("EXIT")) { break; }
+                System.out.println("Process @" + message[1] + " is ending");
+                counter--;
+                if (counter == 0) {
+                    controller.send("EXIT");
+                    break;
+                }
+            } catch (Exception ignored) {}
+        }
         try {
             controller.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.gc();
+        System.exit(0);
+    }
+    @Override
+    public void close() throws IOException {
+        receiver.interrupt();
     }
 
     public static void main(String args[]) {
