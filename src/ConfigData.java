@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -19,6 +20,8 @@ public class ConfigData {
     final Integer minDelay;
     final Integer maxDelay;
 
+    static private final Random random = new Random();
+
     public ConfigData(String pathString, String index) throws Exception {
         // Set data
         this.pathString = pathString;
@@ -29,7 +32,7 @@ public class ConfigData {
         List<String> list = reader.lines()
             .collect(Collectors.toList());
         reader.close();
-            this.ids = new HashSet<>(
+        this.ids = new HashSet<>(
             list.stream()
             .map(x -> x.substring(0, 1))
             .collect(Collectors.toSet())
@@ -39,12 +42,23 @@ public class ConfigData {
             .collect(Collectors.toList())
             .get(0).split("\\s");
         this.thisId = thisOne[0];
+        ids.remove(thisId);
         this.host = thisOne[1];
         this.port = Integer.parseInt(thisOne[2]);
         this.chance = Float.parseFloat(thisOne[3]);
         this.event = Integer.parseInt(thisOne[4]);
         this.minDelay = Integer.parseInt(thisOne[5]);
         this.maxDelay = Integer.parseInt(thisOne[6]);
+    }
+
+    public String getRandomId() {
+        int index = random.nextInt(ids.size());
+        int counter = 0;
+        for (String id : ids) {
+            if (counter == index) { return id; }
+            index++;
+        }
+        return null;
     }
 
     @Override
