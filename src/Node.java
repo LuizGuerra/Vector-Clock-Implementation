@@ -77,7 +77,7 @@ public class Node {
     public void run() {
         waitOtherNodes();
         startProcesses();
-        // endProcess();
+        endProcess();
     }
 
     private void startProcesses() {
@@ -169,7 +169,7 @@ public class Node {
     }
 
     private void endProcess() {
-        int counter = configData.sortedIds.size();
+        int counter = configData.sortedIds.size() - 1;
         try {
             controller.send("CLOSING " + configData.thisId);
         } catch (Exception ignored) {}
@@ -177,8 +177,10 @@ public class Node {
             try {
                 String[] message = controller.receive().split("\\s");
                 if(message[0].equals("EXIT")) { break; }
+                if(message[1].equals(configData.thisId)) { continue; }
                 counter--;
-                System.out.println("Process @" + message[1] + " is ending. " + counter + " more to end.");
+                System.out.println("Process @" + message[1] + 
+                    " is ending. " + counter + " more to end.");
                 if (counter == 0) {
                     controller.send("EXIT");
                     break;

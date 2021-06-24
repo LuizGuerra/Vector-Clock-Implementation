@@ -24,12 +24,6 @@ public class MulticastController implements Closeable {
         socket.send(packet);
     }
 
-    // public void send(String request, String body) throws IOException {
-    //     byte[] message = (request + " " + name + " " + body).getBytes();
-    //     DatagramPacket packet = new DatagramPacket(message, message.length, group, port);
-    //     socket.send(packet);
-    // }
-
     public String receive() throws IOException {
         // Read
         byte[] entry = new byte[1024]; // 2^14 bytes
