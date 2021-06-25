@@ -33,7 +33,7 @@ public class Node {
         for (String id : configData.sortedIds) { vectorClock.put(id, 0); }
     }
 
-    private class ReceiveUnicast extends Thread {
+    private class ReceiveUnicast extends Thread {  // Formatar o recebimento de um evento
         @Override
         public void run() {
             while (true) {
@@ -45,7 +45,8 @@ public class Node {
                     String[] received = new String(packet.getData(), 0, packet.getLength()).split(";");
                     updateVectorClockFrom(received[1]);
                     System.out.println("Received event from @" + received[0] +
-                        "\t" + vectorClockToString());
+                    "\t" + vectorClockToString());
+                    System.out.println(received[0] + "\t" + received[1] + "\t" + "R");
                     socket.close();
                 } catch (Exception e) { e.printStackTrace(); }
             }
@@ -77,7 +78,7 @@ public class Node {
     public void run() {
         waitOtherNodes();
         startProcesses();
-        endProcess();
+        //endProcess();
     }
 
     private void startProcesses() {
@@ -90,18 +91,20 @@ public class Node {
             try {
                 Thread.sleep(random.nextInt(intervalSize) + minDelay);
             } catch (Exception ignored) {}
-            if(random.nextDouble() < chance) {
+            if(random.nextDouble() < chance) {  // formatar o envio de um evento para outro nodo
                 // Send message to another process
                 Configuration c = configData.randomConfiguration();
                 System.out.println("Sending event to @" + c.id + "\t" + vectorClockToString());
+                System.out.println(c.id + "\t" + vectorClockToString() + "\t" + "S");
                 try {
                     SendUnicast sender = new SendUnicast(c.host, c.port, vectorClockToString());
                     sender.start();
                 } catch (Exception e) { e.printStackTrace(); };
-            } else {
+            } else {                            // formatar o envio de um evento local
                 // Local event
                 this.vectorClock.put(id, this.vectorClock.get(id) + 1);
                 System.out.println("Local event\t\t" + vectorClockToString());
+                System.out.println(id + "\t" + vectorClockToString() + "\t" + "L");
             }
             System.gc();
         }
@@ -202,6 +205,8 @@ public class Node {
             System.out.println("Usage: java Node <config path> <config index>");
             System.exit(1);
         }
+
+        System.out.println("Running..");
         
         try {
             Node node = new Node(args[0], args[1]);
