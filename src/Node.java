@@ -5,7 +5,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import java.util.Set;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,9 +46,7 @@ public class Node {
                     socket.receive(packet);
                     String[] received = new String(packet.getData(), 0, packet.getLength()).split(";");
                     updateVectorClockFrom(received[1]);
-                    System.out.println("Received event from @" + received[0] +
-                    "\t" + vectorClockToString());
-                    System.out.println(received[0] + "\t" + received[1] + "\t" + "R");
+                    receivedMessagePrintln(received[1], received[0]);
                     socket.close();
                 } catch (Exception e) { e.printStackTrace(); }
             }
@@ -78,7 +78,7 @@ public class Node {
     public void run() {
         waitOtherNodes();
         startProcesses();
-        //endProcess();
+        endProcess();
     }
 
     private void startProcesses() {
@@ -91,20 +91,18 @@ public class Node {
             try {
                 Thread.sleep(random.nextInt(intervalSize) + minDelay);
             } catch (Exception ignored) {}
-            if(random.nextDouble() < chance) {  // formatar o envio de um evento para outro nodo
+            if(random.nextDouble() < chance) {
                 // Send message to another process
                 Configuration c = configData.randomConfiguration();
-                System.out.println("Sending event to @" + c.id + "\t" + vectorClockToString());
-                System.out.println(c.id + "\t" + vectorClockToString() + "\t" + "S");
+                sendMessagePrintln(c.id);
                 try {
                     SendUnicast sender = new SendUnicast(c.host, c.port, vectorClockToString());
                     sender.start();
                 } catch (Exception e) { e.printStackTrace(); };
-            } else {                            // formatar o envio de um evento local
+            } else {
                 // Local event
                 this.vectorClock.put(id, this.vectorClock.get(id) + 1);
-                System.out.println("Local event\t\t" + vectorClockToString());
-                System.out.println(id + "\t" + vectorClockToString() + "\t" + "L");
+                printLocalEvent();
             }
             System.gc();
         }
@@ -137,17 +135,26 @@ public class Node {
             .substring(1);
     }
 
-    // private String localEvent() {
-    //     // i [c,c,c] i d s t
-    // }
+    private void printLocalEvent() {
+        System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "L");
+    }
 
-    // private String sendMessage() {
-    //     // i [c,c,c] i d s t
-    // }
+    private void sendMessagePrintln(String toId) {
+        System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "S" + "\t" + toId);
+        // i [c,c,c] i d s t
+    }
 
-    // private String receiveMessage() {
-    //     // i [c,c,c] i d s t
-    // }
+    private void receivedMessagePrintln(String clock, String fromId) {
+        System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "R" + "\t" + fromId + "\t" + formatClockToArray(clock));
+    }
+
+    private String formatClockToArray() {
+        return "[" + vectorClockToString().replace(" ", ", ") + "]";
+    }
+
+    private String formatClockToArray(String clock) {
+        return "[" + clock.replace(" ", ", ") + "]";
+    }
 
     private void waitOtherNodes() {
         int counter = configData.sortedIds.size();
@@ -172,25 +179,23 @@ public class Node {
     }
 
     private void endProcess() {
-        int counter = configData.sortedIds.size() - 1;
+        final Set<String> ids = configData.ids;
+        Set<String> receivedIds = new HashSet<>();
         try {
             controller.send("CLOSING " + configData.thisId);
         } catch (Exception ignored) {}
-        while(true){
+        while(!receivedIds.containsAll(ids)){
             try {
                 String[] message = controller.receive().split("\\s");
                 if(message[0].equals("EXIT")) { break; }
                 if(message[1].equals(configData.thisId)) { continue; }
-                counter--;
+                receivedIds.add(message[1]);
                 System.out.println("Process @" + message[1] + 
-                    " is ending. " + counter + " more to end.");
-                if (counter == 0) {
-                    controller.send("EXIT");
-                    break;
-                }
+                    " is ending. " + (ids.size() - receivedIds.size()) + " more to end.");
             } catch (Exception ignored) {}
         }
         try {
+            controller.send("EXIT");
             controller.close();
         } catch (IOException e) {
             e.printStackTrace();
