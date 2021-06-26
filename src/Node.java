@@ -190,8 +190,14 @@ public class Node {
                 if(message[0].equals("EXIT")) { break; }
                 if(message[1].equals(configData.thisId)) { continue; }
                 receivedIds.add(message[1]);
-                System.out.println("Process @" + message[1] + 
-                    " is ending. " + (ids.size() - receivedIds.size()) + " more to end.");
+                int difference = ids.size() - receivedIds.size();
+                if (difference != 0) {
+                    System.out.println("Process @" + message[1] + 
+                        " is ending. " + (difference) + " more to end.");
+                } else {
+                    System.out.println("\nAll distributed processes have ended.");
+                    System.out.println("Ending application.");
+                }
             } catch (Exception ignored) {}
         }
         try {
@@ -211,11 +217,14 @@ public class Node {
             System.exit(1);
         }
 
-        System.out.println("Running..");
+        System.out.println("Starting application...");
         
         try {
             Node node = new Node(args[0], args[1]);
             node.run();
-        } catch (Exception ignored) {ignored.printStackTrace();}
+        } catch (Exception e) {
+            System.out.println("Something went wrong.");
+            e.printStackTrace();
+        }
     }
 }
