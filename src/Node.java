@@ -135,16 +135,15 @@ public class Node {
             .substring(1);
     }
 
-    private void printLocalEvent() {
+    private synchronized void printLocalEvent() {
         System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "L");
     }
 
-    private void sendMessagePrintln(String toId) {
+    private synchronized void sendMessagePrintln(String toId) {
         System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "S" + "\t" + toId);
-        // i [c,c,c] i d s t
     }
 
-    private void receivedMessagePrintln(String clock, String fromId) {
+    private synchronized void receivedMessagePrintln(String clock, String fromId) {
         System.out.println(configData.thisId + "\t" + formatClockToArray() + "\t" + "R" + "\t" + fromId + "\t" + formatClockToArray(clock));
     }
 
