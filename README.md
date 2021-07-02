@@ -5,17 +5,17 @@ This is a distributed vector clock implementation using java language, with mult
 To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Vector_clock).
 
 Documentation
-- [Usage](## Usage)
-  - [How to execute:](### How to execute:)
-  - [Update configuration file](### Update configuration file)
-- [Artifacts](## Artifacts)
+- [Usage](##Usage)
+  - [How to execute:](###How to execute:)
+  - [Update configuration file](###Update configuration file)
+- [Artifacts](##Artifacts)
   - [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
-  - [Interaction Diagram](### Interaction Diagram)
+  - [Interaction Diagram](###Interaction Diagram)
 
 
-## Usage
+##Usage
 
-### How to execute:
+###How to execute:
 
 ```
   cd src
@@ -31,7 +31,7 @@ The code will not start if all lines of the configuration file are running in di
 
 To run the software in different machines/VMs, please read ["Update configuration file"](### Update configuration file)
 
-### Update configuration file
+###Update configuration file
 
 To run the software in different machines/VMs, the [configuration file](src/config.csv) contains all necessary data for each node. Each line contains the following data:
 ```
@@ -49,12 +49,12 @@ And the second half is project-specific variables:
 
 Consequently, each line represents one node. In the current implementation, it is used 3 lines, so 3 different machines. The network used to allow such message exchanges was NatNetwork.
 
-## Artifacts
+##Artifacts
 
-### Output example with 3 processes and its diagram representation
+###Output example with 3 processes and its diagram representation
 
 ![Output table and Diagram Image](/output_example_and_representation.png)
 
-### Interaction Diagram
+###Interaction Diagram
 
 ![Interaction Diagram Image](/interaction-diagram.png)
