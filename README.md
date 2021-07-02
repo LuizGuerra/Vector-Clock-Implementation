@@ -6,21 +6,21 @@ To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Ve
 
 ## Table of Contents
 <details open>
-<summary><b>(click to expand or hide)</b></summary>
+<summary>Click to expand or hide</summary>
 
-1. [Usage](##usage-anchor)
-  1. [How to execute:](###How to execute:)
-  1. [Update configuration file](###Update configuration file)
-1. [Artifacts](##Artifacts)
-  1. [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
-  1. [Interaction Diagram](###Interaction Diagram)
-
+1. [Usage](#usage-anchor)
+    1. [How to execute:](#execute-anchor)
+    1. [Update configuration file](#config-file-anchor)
+1. [Artifacts](#articats-anchor)
+    1. [Output example with 3 processes and its diagram representation](#output-anchor)
+    1. [Interaction Diagram](#interaction-diagram-anchor)
 
 </details>
 
-## Usage
 <a id="usage-anchor"></a>
+## Usage
 
+<a id="execute-anchor"></a>
 ### How to execute:
 
 ```
@@ -37,6 +37,7 @@ The code will not start if all lines of the configuration file are running in di
 
 To run the software in different machines/VMs, please read ["Update configuration file"](### Update configuration file)
 
+<a id="config-file-anchor"></a>
 ### Update configuration file
 
 To run the software in different machines/VMs, the [configuration file](src/config.csv) contains all necessary data for each node. Each line contains the following data:
@@ -55,12 +56,15 @@ And the second half is project-specific variables:
 
 Consequently, each line represents one node. In the current implementation, it is used 3 lines, so 3 different machines. The network used to allow such message exchanges was NatNetwork.
 
+<a id="articats-anchor"></a>
 ## Artifacts
 
+<a id="output-anchor"></a>
 ### Output example with 3 processes and its diagram representation
 
 ![Output table and Diagram Image](/output_example_and_representation.png)
 
+<a id="interaction-diagram-anchor"></a>
 ### Interaction Diagram
 
 ![Interaction Diagram Image](/interaction-diagram.png)
