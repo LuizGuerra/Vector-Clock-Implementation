@@ -1,6 +1,6 @@
 # Vector Clock Implementation
 
-This is a vector clock implementation using java language, multicast and singlecast (UDP) protocols.
+This is a vector clock implementation using java language, with multicast and singlecast (UDP) protocols.
 
 To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Vector_clock).
 
