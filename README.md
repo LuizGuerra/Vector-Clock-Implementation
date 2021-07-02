@@ -4,11 +4,36 @@ This is a distributed vector clock implementation using java language, with mult
 
 To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Vector_clock).
 
+Documentation
+- [Usage](## Usage)
+  - [How to execute:](### How to execute:)
+  - [Update configuration file](### Update configuration file)
+- [Artifacts](## Artifacts)
+  - [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
+  - [Interaction Diagram](### Interaction Diagram)
+
+
 ## Usage
+
+### How to execute:
+
+```
+  cd src
+  javac Node.java
+  java Node config.csv <line number>
+```
+
+To compile the project you must enter first the /src/ folder. After that, you compile it using javac.
+
+The current example have 3 lines and are all set to run in the same machine (localhost), so you need to say to each terminal who will he learn. It is important to note that you must pass a different line to each on of them.
+
+The code will not start if all lines of the configuration file are running in different terminals.
+
+To run the software in different machines/VMs, please read ["Update configuration file"](### Update configuration file)
 
 ### Update configuration file
 
-The [configuration file](src/config.csv) contains all necessary data. Each line contains the following data:
+To run the software in different machines/VMs, the [configuration file](src/config.csv) contains all necessary data for each node. Each line contains the following data:
 ```
   id host port chance events min_delay max_delay
 ```
@@ -24,7 +49,7 @@ And the second half is project-specific variables:
 
 Consequently, each line represents one node. In the current implementation, it is used 3 lines, so 3 different machines. The network used to allow such message exchanges was NatNetwork.
 
-## Documentation
+## Artifacts
 
 ### Output example with 3 processes and its diagram representation
 
