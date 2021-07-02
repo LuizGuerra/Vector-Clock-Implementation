@@ -8,7 +8,7 @@ To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Ve
 
 ### Output example with 3 processes and its diagram representation
 
-![Output table and Diagram Image](/interaction-diagram.png)
+![Output table and Diagram Image](/output_example_and_representation.png)
 
 ### Interaction Diagram
 
