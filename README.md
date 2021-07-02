@@ -12,7 +12,8 @@ Documentation index
   - [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
   - [Interaction Diagram](###Interaction Diagram)
 
-## Usage <a name="usage-anchor"></a>
+## Usage
+<a name="usage-anchor"></a>
 
 ### How to execute:
 
