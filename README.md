@@ -4,16 +4,22 @@ This is a distributed vector clock implementation using java language, with mult
 
 To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Vector_clock).
 
-Documentation index
-- [Usage](##usage-anchor)
-  - [How to execute:](###How to execute:)
-  - [Update configuration file](###Update configuration file)
-- [Artifacts](##Artifacts)
-  - [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
-  - [Interaction Diagram](###Interaction Diagram)
+## Table of Contents
+<details open>
+<summary><b>(click to expand or hide)</b></summary>
+
+1. [Usage](##usage-anchor)
+  1. [How to execute:](###How to execute:)
+  1. [Update configuration file](###Update configuration file)
+1. [Artifacts](##Artifacts)
+  1. [Output example with 3 processes and its diagram representation](### Output example with 3 processes and its diagram representation)
+  1. [Interaction Diagram](###Interaction Diagram)
+
+
+</details>
 
 ## Usage
-<a name="usage-anchor"></a>
+<a id="usage-anchor"></a>
 
 ### How to execute:
 
