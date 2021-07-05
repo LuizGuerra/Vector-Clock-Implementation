@@ -44,7 +44,7 @@ To run the software in different machines/VMs, the [configuration file](src/conf
 ```
   id host port chance events min_delay max_delay
 ```
-The configuration file contains 2 types of data, the first is how to recognize and reach the process:
+The configuration file contains 2 types of data. The first one is how to recognize (id) and send a message to another process (host and port):
 - Id is the node identifier;
 - Host is the node IP address;
 - Port is the computer port that will be accessed to receive messages;
