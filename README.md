@@ -31,11 +31,11 @@ To learn more about Vector Clocks, [click here](https://en.wikipedia.org/wiki/Ve
 
 To compile the project you must enter first the /src/ folder. After that, you compile it using javac.
 
-The current example have 3 lines and are all set to run in the same machine (localhost), so you need to say to each terminal who will he learn. It is important to note that you must pass a different line to each on of them.
+The current example have 3 lines and are all set to run in the same machine (localhost), so you need to say to each terminal who will he be. It is important to note that you must pass a different line to each on of them.
 
 The code will not start if all lines of the configuration file are running in different terminals.
 
-To run the software in different machines/VMs, please read ["Update configuration file"](### Update configuration file)
+To run the software in different machines/VMs, please read ["Update configuration file"](#config-file-anchor).
 
 <a id="config-file-anchor"></a>
 ### Update configuration file
